@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}<title>Registration</title>{% endblock %}
+{% block body %}
+  <div id= "reg" class="container">
+  <form method="POST" enctype=multipart/form-data" autocomplete="off">
+  <h2 style = "margin-top: 2%; margin-bottom: 2% ">Sign up</h2>
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group">
+        <h5>{{ field.label_tag }}</h5>
+      <p style = "color: red; font-size: 13px;" id="{{ field.id_for_label}}_par"></p>
+          {{ field }}<br>
+        {% if field.help_text %}
+          <small style="color: #131317">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+        <form method = "post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ profile_form.as_p }}
+        <button type="submit">Upload</button>
+    </form>
+      <input value="Sign Up" id="buttonS" class="btn btn-default" type="submit"  style = "margin-top: 2%; margin-bottom: 5%;">
+  </form>
+  </div>iy
+{% endblock %}
