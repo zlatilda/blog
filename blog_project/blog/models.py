@@ -35,7 +35,7 @@ class Post(models.Model):
     updated = models.DateTimeField(auto_now=True)
     likes= models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='post_likes')
     slug = models.SlugField(max_length=250, unique=True)
-    thumb = models.ImageField(upload_to='post_image', blank=True)
+    thumb = models.ImageField(upload_to='post_image', blank=True, default='default.png')
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
     def save(self, *args, **kwargs):

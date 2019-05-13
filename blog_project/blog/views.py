@@ -111,7 +111,7 @@ def comment_delete(request, pk):
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.delete()
-    redirect('blog:index')
+    return redirect('blog:index')
 
 
 class PostLikeToggle(RedirectView):
@@ -136,7 +136,7 @@ def post_new(request):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
-            post.author = request.user
+            post.user = request.user
             post.created = timezone.now()
             post.save()
         return redirect('blog:index')
