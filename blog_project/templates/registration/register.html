@@ -18,11 +18,7 @@
         {% endfor %}
       </div>
     {% endfor %}
-        <form method = "post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ profile_form.as_p }}
-        <button type="submit">Upload</button>
-    </form>
+
       <input value="Sign Up" id="buttonS" class="btn btn-default" type="submit"  style = "margin-top: 2%; margin-bottom: 5%;">
   </form>
   </div>iy

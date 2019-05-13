@@ -36,6 +36,7 @@ class Post(models.Model):
     likes= models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='post_likes')
     slug = models.SlugField(max_length=250, unique=True)
     thumb = models.ImageField(upload_to='post_image', blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -46,13 +47,13 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    poll = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField(max_length = 500)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return '{}-{}'.format(self.poll.title, str(self.user.username))
+        return '{}-{}'.format(self.post.title, str(self.user.username))
 
     def get_absolute_url(self):
         return reverse("poll:poll", kwargs={"poll_pk": self.pk})
