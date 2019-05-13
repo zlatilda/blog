@@ -51,7 +51,7 @@
         .container{width: 50%;}
 	}
 
-    .container{padding-top: 5%; padding-bottom: 5%;}
+    .container{padding-top: 2%; padding-bottom: 2%;}
 
 </style>
 
@@ -63,16 +63,29 @@
 			<img src="{{ post.thumb.url }}" class="post_img"/>
 
 			<div class="row">
-			<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"><a  href="#"><img src="{% static 'images/heart.png'%}" class="like"></a> <label id="likeamount"><b>{{ obj.likes.count }}</b></label></div>
-			<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
-				<a href="#"><img src="{% static 'images/facebook_ico.png'%}" class="shareico"></a>
-				<a href="#"><img src="{% static 'images/facebook_ico.png'%}" class="shareico"></a>
-			</div>
-			<div class="col-lg-2 col-md-2 col-sm-12 col-xs-12"><label id="date">{{ post.created }}</label></div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"><a  href="#"><img src="{% static 'images/heart.png'%}" class="like"></a> <label id="likeamount"><b>{{ obj.likes.count }}</b></label></div>
+                <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                    <div class="row">
+                    {% load social_share %}
+                    {% post_to_facebook object_or_url%}
+                    <div class="facebook-this">
+                        <a href="{{ facebook_url }}" target="_blank"><img class="shareico" src="{% static 'images/facebook_ico.png' %}"></a>
+                    </div>
+                    {% post_to_twitter "{{post.title}}. Check it out!" object_or_url %}
+                    <div class="tweet-this">
+                        <a href="{{ tweet_url }}" class="meta-act-link meta-tweet" target="_blank"><img class="shareico" src="{% static 'images/twitter_ico.png' %}"></a>
+                    </div>
+                    {% post_to_reddit "{{post.title}}" object_or_url %}
+                   <div class="reddit-this">
+                        <a href="{{ reddit_url }}" target="_blank"><img class="shareico" src="{% static 'images/reddit-ico.png' %}"></a>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12"><label id="date">{{ post.created }}</label></div>
 			</div><br>
             <h4>{{ post.title }}</h4>
 			<div class="row">
-				<p>{{ post.body }}t</p><br>
+				<p>{{ post.body }}</p><br>
 			</div>
 			<p style="font-style: italic;">by <b>{{ post.user }}</b></p>
 
@@ -126,5 +139,17 @@
 				document.getElementById("show_comments").innerHTML = "Show comments";
 			}
 		}
+
+		$(document).ready(function(){
+         var elements = document.getElementsByClassName("post_pic");
+        for(var i=0; i<elements.length; i++)
+        {
+            var el = elements[i];
+            if(el.offsetWidth < el.offsetHeight)
+            {
+                el.className = "portrait"
+            }
+        }
+    });
 	</script>
 {% endblock %}>

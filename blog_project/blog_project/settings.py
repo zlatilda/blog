@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blog',
     'bootstrap4',
     'PIL',
+    'django_social_share',
 ]
 
 MIDDLEWARE = [

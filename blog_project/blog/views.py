@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .forms import *
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
+from django.db.models import Q
 # Create your views here.
 
 
@@ -66,6 +67,21 @@ def post_detail(request, post_pk):
         #'images': images,
     }
     return render(request, template, context)
+
+
+def search(request):
+
+    template = "list.html"
+    query = request.GET.get('q')
+    if query:
+        items = Post.objects.filter(Q(title__icontains=query) | Q(body__icontains=query))
+    else:
+        items = Post.objects.all()
+    content = {
+        'items': items,
+    }
+
+    return render(request, template, content)
 
 
 

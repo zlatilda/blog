@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'registration/', signup, name='signup'),
     url(r'create-profile/', create_profile, name='create_profile'),
     url(r'^post/(?P<post_pk>\d+)/$', post_detail, name='post_detail'),
+    url(r'result/', search, name="search"),
 ]
 if settings.DEBUG:
         urlpatterns += static(settings.MEDIA_URL,
