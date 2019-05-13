@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import UserProfile, Comment
+from .models import UserProfile, Comment, Post
 
 
 class ProfileForm(forms.ModelForm):
@@ -42,3 +42,15 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'class': 'form-control', 'style': 'resize:none; height: 5em;'})
         }
+
+
+class PostForm(forms.ModelForm):
+
+    class Meta:
+        model = Post
+        fields = ('title', 'body', 'thumb',)
+        widgets = {
+            'title': forms.TextInput(attrs={'class':'form-control'}),
+            'body': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+

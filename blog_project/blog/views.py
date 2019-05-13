@@ -4,12 +4,26 @@ from .forms import *
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic import TemplateView, RedirectView
+from django.utils import timezone
 # Create your views here.
 
 
 def index(request):
     template = 'list.html'
     items = Post.objects.all().order_by('-created')
+
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(items, 9)
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        items = paginator.page(1)
+    except EmptyPage:
+        items = paginator.page(paginator.num_pages)
+
     context = {
 
         'items': items,
@@ -23,7 +37,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('blog:create_profile')
+            return redirect('blog:index')
     else:
         form = RegForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -83,6 +97,56 @@ def search(request):
 
     return render(request, template, content)
 
+
+def comment_delete(request, pk):
+    comment = Comment.objects.get(pk=pk)
+    if comment.user == request.user:
+        comment.is_removed = True
+        comment.save()
+        comment.delete()
+
+    return redirect(request.META['HTTP_REFERER'])
+
+
+def post_delete(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.delete()
+    redirect('blog:index')
+
+
+class PostLikeToggle(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        slug = self.kwargs.get("slug")
+        print(slug)
+        obj = get_object_or_404(Post, slug=slug)
+        url_ = obj.get_absolute_url()
+        user = self.request.user
+        if user.is_authenticated:
+            if user in obj.likes.all():
+                obj.likes.remove(user)
+            else:
+                obj.likes.add(user)
+        return url_
+
+
+def post_new(request):
+    template = 'post-edit.html'
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.created = timezone.now()
+            post.save()
+        return redirect('blog:index')
+    else:
+        form = PostForm()
+
+    content = {
+        'form': form
+    }
+    return render(request, template, content)
 
 
 

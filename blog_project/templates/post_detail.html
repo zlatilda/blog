@@ -23,7 +23,7 @@
 
 	textarea{width:100%; border: #e3e5e8 1px solid;}
 
-	#comment{background-color: #f2f4f7; margin-bottom: 0.3em; width:100%;}
+	#comment{background-color: #f2f4f7; margin-bottom: 0.3em; width:100%; padding-bottom:0%;}
 
 	button{width: 100%; background-color: #e7e7e7; color: black; border: none;}
 	button:hover {
@@ -32,13 +32,7 @@
 
 	#comment_section{display: none;}
 
-	#send_btn img
-	{
-		position: relative;
-	    top: 50%;
-	    left: 50%;
-	    transform:translate(-50%, -50%);
-	}
+    #send_btn{text-align: right; padding-bottom: 1%;}
 
 	@media only screen and (max-width: 500px) {
 	  #del_btn {
@@ -62,8 +56,8 @@
 
 			<img src="{{ post.thumb.url }}" class="post_img"/>
 
-			<div class="row">
-                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"><a  href="#"><img src="{% static 'images/heart.png'%}" class="like"></a> <label id="likeamount"><b>{{ obj.likes.count }}</b></label></div>
+			<div class="row" style="padding-top: 1%;">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"><a  href="{{ post.get_like_url }}"><img src="{% static 'images/heart.png'%}" class="like"></a> <label id="likeamount"><b>{{ post.likes.count }}</b></label></div>
                 <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
                     <div class="row">
                     {% load social_share %}
@@ -87,14 +81,18 @@
 			<div class="row">
 				<p>{{ post.body }}</p><br>
 			</div>
-			<p style="font-style: italic;">by <b>{{ post.user }}</b></p>
+			<div class="row">
+                <p style="font-style: italic;">by <b>{{ post.user }}</b></p>
+                <a href="{% url 'blog:post-delete' post.pk %}"><span style="color:red;">delete this post</span></a>
+            </div>
+
 
 				 <form method="post">
                     {% csrf_token %}
                     {% if request.user.is_authenticated %}
                         {{ comment_form.as_p }}
 
-                        <input id="send_btn" type="submit" value="Submit" class="btn btn-outline-success">
+                        <div id="send_btn"><input  type="submit" value="Submit" class="btn btn-outline-success"></div>
                     {% else %}
                         <p style="color:red"> You're not authenticated to write a comment<p>
                     {% endif %}
@@ -109,12 +107,12 @@
 				<div class="container" id="comment">
 					<div class="row">
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"><label><b>{{ comment.user }}</b></label></div>
-								<div class="col-lg-4 col-md-4 col-sm-3 col-7" style="text-align: right" id="del_btn">
-									<a href="#">
+								<div class="col-lg-3 col-md-3 col-sm-3 col-7" style="text-align: right" id="del_btn">
+									<a href="{% url 'blog:comment_delete' comment.pk %}" onclick="return confirm('Do you really want to delete this comment?')">
 										<img src="{% static 'images/delete.png'%}" class="ico">
 									</a>
 								</div>
-							<div class="col-lg-2 col-md-2 col-sm-3 col-5" style="text-align: right"><label id="date" style="font-size: 0.7em;">{{ comment.timestamp }}</label> </div>
+							<div class="col-lg-3 col-md-3 col-sm-3 col-5" style="text-align: right"><label id="date" style="font-size: 0.7em;">{{ comment.timestamp }}</label> </div>
 					</div>
 					<div class="row"><p>{{ comment.content }}</p></div>
 				</div>
@@ -140,16 +138,6 @@
 			}
 		}
 
-		$(document).ready(function(){
-         var elements = document.getElementsByClassName("post_pic");
-        for(var i=0; i<elements.length; i++)
-        {
-            var el = elements[i];
-            if(el.offsetWidth < el.offsetHeight)
-            {
-                el.className = "portrait"
-            }
-        }
-    });
+
 	</script>
 {% endblock %}>

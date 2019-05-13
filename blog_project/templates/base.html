@@ -8,12 +8,20 @@
 
     <style>
         html{overflow-x: hidden;}
+
+        .nav-bk{
+            background: #2196f3;
+            background: -webkit-linear-gradient(to right, #f44336, #2196f3);
+            background: linear-gradient(to right, #f44336, #2196f3);
+        }
+
+        #buttonS{background-color: #e7e7e7;}
     </style>
 
 </head>
 <body>
 
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark" style=" position: fixed; width:100%; z-index: 999;">
+	<nav class="navbar navbar-expand-md navbar-dark nav-bk" style=" position: fixed; width:100%; z-index: 999;">
       <a class="navbar-brand" href="{% url 'blog:index' %}">Головна</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -28,12 +36,15 @@
           </li>
             {% if not request.user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#" style="color: orangered; font-weight: bold;">{{ request.user.username }}</a>
+                    <a class="nav-link" href="#" style="color: mediumturquoise; font-weight: bold;">{{ request.user.username }}</a>
+                </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'blog:create-post' %}" style="color: mediumturquoise; font-weight: bold;">Create post</a>
                 </li>
             {% endif %}
             {% else %}
                  <li class="nav-item">
-                     <a class="nav-link" href="#">Увійти</a>
+                     <a class="nav-link" href="{% url 'login' %}">Увійти</a>
                  </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'blog:signup' %}">Реєстрація</a>
@@ -50,4 +61,19 @@
 
     {% endblock %}
 </div>
+
+
+<script>
+    $(document).ready(function(){
+         var elements = document.getElementsByClassName("post_pic");
+        for(var i=0; i<elements.length; i++)
+        {
+            var el = elements[i];
+            if(el.offsetWidth < el.offsetHeight)
+            {
+                el.className = "portrait"
+            }
+        }
+    });
+</script>
 </body>

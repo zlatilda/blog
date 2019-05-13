@@ -45,6 +45,12 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse("blog:post_detail", kwargs={"post_pk": self.pk})
+
+    def get_like_url(self):
+        return reverse("blog:like-toggle", kwargs={"slug": self.slug})
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

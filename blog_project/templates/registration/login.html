@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}<title>Login</title>{% endblock %}
+
+{% block body %}
+  <div id= "reg" class="container"  >
+  <form method="post" style="position: absolute; top: 50%; left: 50%; margin-right: -50%; transform: translate(-50%, -50%);background-color: rgba(255,255,255,0.7);padding: 20px 20px 20px 20px">
+   <h2>Login</h2>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div>
+  <input id="buttonS" class="btn btn-default" type="submit" value="login"  style = "margin-top: 2%; margin-bottom: 5%;width:100%" />
+  <input type="hidden" name="next" value="{{ next }}" />
+</div>
+  </form>
+  </div>
+{% endblock %}
