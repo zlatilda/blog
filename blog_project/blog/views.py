@@ -3,7 +3,7 @@ from django.shortcuts import render
 from .forms import *
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import TemplateView, RedirectView
 from django.utils import timezone
@@ -88,7 +88,7 @@ def search(request):
     template = "list.html"
     query = request.GET.get('q')
     if query:
-        items = Post.objects.filter(Q(title__icontains=query) | Q(body__icontains=query))
+        items = Post.objects.filter(Q(title__icontains=query) | Q(body__icontains=query) | Q(user__username__icontains=query))
     else:
         items = Post.objects.all()
     content = {
@@ -147,6 +147,22 @@ def post_new(request):
         'form': form
     }
     return render(request, template, content)
+
+
+def order_by_params(request, variable):
+    template="list.html"
+
+    older = Post.objects.all().order_by('-created').reverse()
+    likes = Post.objects.all().annotate(like_count=Count('likes')).order_by('-like_count')
+
+    if variable == 'date':
+        context = {'items': older}
+        return render(request, template, context)
+
+    if variable == 'likes':
+        context = {'items': likes}
+        return render(request, template, context)
+
 
 
 

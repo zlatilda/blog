@@ -37,8 +37,12 @@
 
         .container{padding-top: 2%; padding-bottom: 2%;}
     </style>
-
     	<div class="container">
+        <div class="row" style="margin-bottom: 1em;">
+            <h5 style="margin-right: 1%; color: darkred;">Filter by: </h5>
+            <a href="{% url 'blog:order_by_params' 'likes' %}" style="margin-right: 1%;"><button type="button" class="btn btn-outline-danger">likes</button></a>
+            <a href="{% url 'blog:order_by_params' 'date' %}" style="margin-right: 1%;"><button type="button" class="btn btn-outline-danger">date</button></a>
+        </div>
         <div class="row">
         {% for obj in items %}
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">

@@ -84,7 +84,7 @@
 			<div class="row">
                 <div class="col-8"><p style="font-style: italic;">by <b>{{ post.user }}</b></p></div>
                 {% if post.user.username == user.username %}
-                    <div class="col-4" style="text-align: right;"><a href="{% url 'blog:post-delete' post.pk %}"><span style="color: red;">delete this post</span></a></div>
+                    <div class="col-4" style="text-align: right;"><a href="{% url 'blog:post-delete' post.pk %}" onclick="return confirm('Do you really want to delete this post?')"><span style="color: red;">delete this post</span></a></div>
                 {% endif %}
             </div>
 

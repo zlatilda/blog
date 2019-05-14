@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'(?P<slug>[-\w]+)/like/', core_view.PostLikeToggle.as_view(), name="like-toggle"),
     url(r'create-new/', post_new, name='create-post'),
     url('delete/post/(?P<pk>[-\w]+)/', post_delete, name='post-delete'),
+    url(r'^ordered/(?P<variable>[-\w]+)/', order_by_params, name='order_by_params'),
 ]
 if settings.DEBUG:
         urlpatterns += static(settings.MEDIA_URL,
