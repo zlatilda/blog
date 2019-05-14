@@ -5,21 +5,16 @@
   <form method="POST" enctype=multipart/form-data" autocomplete="off">
   <h2 style = "margin-top: 2%; margin-bottom: 2% ">Sign up</h2>
     {% csrf_token %}
-    {% for field in form %}
-      <div class="form-group">
+     <form method="POST" class="post-form" autocomplete="off" enctype="multipart/form-data">{% csrf_token %}
+        {% for field in profile_form %}
         <h5>{{ field.label_tag }}</h5>
-      <p style = "color: red; font-size: 13px;" id="{{ field.id_for_label}}_par"></p>
-          {{ field }}<br>
-        {% if field.help_text %}
-          <small style="color: #131317">{{ field.help_text }}</small>
-        {% endif %}
+             {{ field }}<br>
         {% for error in field.errors %}
           <p style="color: red">{{ error }}</p>
         {% endfor %}
-      </div>
-    {% endfor %}
+        {% endfor %}
+        <button id="buttonS" type="submit" class="save btn btn-default" style = "margin-top: 2%; margin-bottom: 5%;">Save</button>
 
-      <input value="Sign Up" id="buttonS" class="btn btn-default" type="submit"  style = "margin-top: 2%; margin-bottom: 5%;">
   </form>
-  </div>iy
+  </div>
 {% endblock %}

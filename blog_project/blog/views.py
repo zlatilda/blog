@@ -31,13 +31,13 @@ def index(request):
     return render(request, template, context)
 
 
-def signup(request):
+def signup(request, backend='django.contrib.auth.backends.ModelBackend'):
     if request.method == 'POST':
         form = RegForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            return redirect('blog:index')
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('blog:create_profile')
     else:
         form = RegForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -52,6 +52,8 @@ def create_profile(request):
     else:
         profile_form = ProfileForm()
     return render(request, 'registration/register.html', {'profile_form': profile_form})
+
+
 
 
 def post_detail(request, post_pk):
@@ -164,6 +166,18 @@ def order_by_params(request, variable):
         return render(request, template, context)
 
 
+def get_user_profile(request, username):
+    template = 'user_page.html'
+    user = User.objects.get(username=username)
+    comments = Comment.objects.filter(user = user).order_by('-timestamp')
+
+    profile = UserProfile.objects.get(user=user)
+    context = {
+        'user': user,
+        'comments': comments,
+        'profile': profile,
+    }
+    return render(request, template, context)
 
 
 

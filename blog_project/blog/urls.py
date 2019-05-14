@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'create-new/', post_new, name='create-post'),
     url('delete/post/(?P<pk>[-\w]+)/', post_delete, name='post-delete'),
     url(r'^ordered/(?P<variable>[-\w]+)/', order_by_params, name='order_by_params'),
+    url(r'profile/(?P<username>[-\w]+)/', get_user_profile, name='get_user_profile'),
 ]
 if settings.DEBUG:
         urlpatterns += static(settings.MEDIA_URL,

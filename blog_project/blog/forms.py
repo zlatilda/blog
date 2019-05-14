@@ -6,7 +6,10 @@ from .models import UserProfile, Comment, Post
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ('document',)
+        fields = ('thumb', 'bio')
+        widgets = {
+            'bio': forms.Textarea(attrs={'class': 'form-control'}),
+        }
 
 
 class RegForm(forms.ModelForm):

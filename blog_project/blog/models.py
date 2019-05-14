@@ -9,8 +9,8 @@ from django.db.models.signals import post_save
 class UserProfile(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    #thumb = models.ImageField(upload_to='profile_image', blank=True)
-    document = models.ImageField(upload_to = 'profile_image', default = 'default.png')
+    thumb = models.ImageField(upload_to='profile_image', blank=True, default='default.png')
+    bio = models.TextField(default='')
 
     def __str__(self):
         return self.user.username
