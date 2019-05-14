@@ -12,6 +12,8 @@
   <input id="buttonS" class="btn btn-default" type="submit" value="login"  style = "margin-top: 2%; margin-bottom: 5%;width:100%" />
   <input type="hidden" name="next" value="{{ next }}" />
 </div>
+      <p><strong>-- OR --</strong></p>
+      <a href="{% url 'social:begin' 'github' %}">Login with GitHub</a><br>
   </form>
   </div>
 {% endblock %}
