@@ -39,9 +39,10 @@
     </style>
     	<div class="container">
         <div class="row" style="margin-bottom: 1em;">
-            <h5 style="margin-right: 1%; color: darkred;">Filter by: </h5>
+            <h5 style="margin-right: 0.5em; margin-top: 0.5em; color: darkred;">Filter by: </h5>
             <a href="{% url 'blog:order_by_params' 'likes' %}" style="margin-right: 1%;"><button type="button" class="btn btn-outline-danger">likes</button></a>
             <a href="{% url 'blog:order_by_params' 'date' %}" style="margin-right: 1%;"><button type="button" class="btn btn-outline-danger">date</button></a>
+             <a href="{% url 'blog:order_by_params' 'alph' %}" style="margin-right: 1%;"><button type="button" class="btn btn-outline-danger">alphabet</button></a>
         </div>
         <div class="row">
         {% for obj in items %}

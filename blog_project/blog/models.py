@@ -7,22 +7,6 @@ from django.db.models.base import ObjectDoesNotExist
 from django.db.models.signals import post_save
 
 
-class UserProfile(models.Model):
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default=1)
-    thumb = models.ImageField(upload_to='profile_image', blank=True, default='default.png')
-    bio = models.TextField(default='')
-
-    def __str__(self):
-        return self.user.username
-
-    def create_profile(sender, **kwargs):
-        if kwargs['created']:
-            user_profile = UserProfile.objects.create(user=kwargs['instance'])
-
-    post_save.connect(create_profile, sender=User)
-
-
 class Post(models.Model):
 
     STATUS_CHOISES = (
@@ -64,5 +48,30 @@ class Comment(models.Model):
 
     def get_absolute_url(self):
         return reverse("poll:poll", kwargs={"poll_pk": self.pk})
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}-{}'.format(self.post.title, str(self.user.username))
+
+    def get_absolute_url(self):
+        return reverse("blog:post_detail", kwargs={"pk": self.pk})
+
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    bio = models.TextField(default='')
+    favorites = models.ManyToManyField(Post, related_name='favorited_by')
+
+    def save(self, *args, **kwargs):
+        super(UserProfile, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.user.username
+
+
 
 

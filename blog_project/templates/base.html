@@ -35,7 +35,7 @@
           </li>
             {% if not request.user.is_superuser %}
                 <li class="nav-item">
-                    <a class="nav-link"  href="{% url 'blog:get_user_profile' request.user.username %}" style="color: mediumturquoise; font-weight: bold;">{{ request.user.username }}</a>
+                    <a class="nav-link"  href="{% url 'blog:get_user_profile' request.user.pk %}" style="color: mediumturquoise; font-weight: bold;">{{ request.user.username }}</a>
                 </li>
                  <li class="nav-item">
                     <a class="nav-link" href="{% url 'blog:create-post' %}" style="color: mediumturquoise; font-weight: bold;">Create post</a>

@@ -7,7 +7,8 @@ from django.db.models import Q, Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import TemplateView, RedirectView
 from django.utils import timezone
-from django.core.mail import send_mail
+from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 # Create your views here.
 
 
@@ -26,7 +27,6 @@ def index(request):
         items = paginator.page(paginator.num_pages)
 
     context = {
-
         'items': items,
     }
     return render(request, template, context)
@@ -35,13 +35,22 @@ def index(request):
 def signup(request, backend='django.contrib.auth.backends.ModelBackend'):
     if request.method == 'POST':
         form = RegForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+        profile_form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid() and profile_form.is_valid():
+            #user = form.save()
+            form.save()
+            profile = profile_form.save(commit=False)
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            profile.user = user
+            profile.save()
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            return redirect('blog:create_profile')
+            return redirect('blog:index')
     else:
         form = RegForm()
-    return render(request, 'registration/register.html', {'form': form})
+        profile_form = ProfileForm()
+    return render(request, 'registration/register.html', {'form': form, 'profile_form': profile_form})
 
 
 def create_profile(request):
@@ -64,7 +73,13 @@ def post_detail(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
     rand_post = Post.objects.order_by('?')
 
-    #images = Images.objects.filter(slug=post.slug)
+    fav = 1
+    user = request.user
+    if user.is_authenticated:
+        if not Favorite.objects.filter(user=request.user):
+            fav = 2
+        else:
+            fav = 3
 
     comments = Comment.objects.filter(post=post)
     if request.method == 'POST':
@@ -82,6 +97,7 @@ def post_detail(request, post_pk):
         'rand_post': rand_post[:5],
         'comments': comments,
         'comment_form': comment_form,
+        'favorite': fav,
         #'images': images,
     }
     return render(request, template, context)
@@ -178,22 +194,29 @@ def order_by_params(request, variable):
 
     older = Post.objects.all().order_by('-created').reverse()
     likes = Post.objects.all().annotate(like_count=Count('likes')).order_by('-like_count')
+    alph = Post.objects.all().order_by('title')
 
     if variable == 'date':
         context = {'items': older}
-        return render(request, template, context)
 
     if variable == 'likes':
         context = {'items': likes}
-        return render(request, template, context)
+
+    if variable == 'alph':
+        context = {'items': alph}
+
+    return render(request, template, context)
 
 
-def get_user_profile(request, username):
+
+def get_user_profile(request, pk):
     template = 'user_page.html'
-    user = User.objects.get(username=username)
+    #user = User.objects.get(username=username)
+    user = get_object_or_404(User, pk=pk)
     comments = Comment.objects.filter(user = user).order_by('-timestamp')
 
     items = Post.objects.all().filter(user=user).order_by('-created')
+    favorites = Favorite.objects.filter(user=user)
 
     profile = UserProfile.objects.get(user=user)
     context = {
@@ -201,8 +224,79 @@ def get_user_profile(request, username):
         'comments': comments,
         'profile': profile,
         'items': items,
+        'favorites':favorites,
     }
     return render(request, template, context)
+
+
+def get_user_favourites(request, pk):
+    template = 'list.html'
+    user = get_object_or_404(User, pk=pk)
+    favorites = Favorite.objects.filter(user=user)
+    fav = []
+    for obj in favorites:
+        fav.append(obj.post)
+
+    context = {'items': fav,}
+    return render(request, template, context)
+
+
+def user_settings(request):
+
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect('blog:get_user_profile', request.user)
+        else:
+            return redirect('user-settings')
+    else:
+        form = EditProfileForm(instance=request.user)
+        args = {'form': form, }
+        return render(request, 'settings.html', args)
+
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(data=request.POST, user=request.user)
+
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect('blog:get_user_profile', request.user)
+        else:
+            return redirect('blog:change_password')
+    else:
+        form = PasswordChangeForm(user=request.user)
+        args = {'form': form}
+        return render(request, 'change_password.html', args)
+
+
+class AddToFavorite(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        print(pk)
+        obj = get_object_or_404(Post,pk=pk)
+        url_ = obj.get_absolute_url()
+        user = self.request.user
+        if user.is_authenticated:
+            Favorite.objects.create(user=user, post=obj)
+        return url_
+
+
+class RemoveFromFavorite(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        print(pk)
+        obj = get_object_or_404(Post,pk=pk)
+        url_ = obj.get_absolute_url()
+        user = self.request.user
+        fav = get_object_or_404(Favorite, post=obj, user=user)
+        if user.is_authenticated:
+            fav.delete()
+        return url_
+
 
 
 

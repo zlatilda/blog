@@ -5,6 +5,7 @@ from django.conf import settings
 from django.urls import path
 from .views import *
 from . import views as core_view
+from django.urls import path, include
 app_name = 'blog'
 
 urlpatterns = [
@@ -18,8 +19,14 @@ urlpatterns = [
     url(r'create-new/', post_new, name='create-post'),
     url('delete/post/(?P<pk>[-\w]+)/', post_delete, name='post-delete'),
     url(r'^ordered/(?P<variable>[-\w]+)/', order_by_params, name='order_by_params'),
-    url(r'profile/(?P<username>[-\w]+)/', get_user_profile, name='get_user_profile'),
+    url(r'profile/(?P<pk>[-\w]+)/', get_user_profile, name='get_user_profile'),
     url('edit/post/(?P<pk>[-\w]+)/', edit_post, name='edit_post'),
+    url(r'user-settings/', user_settings, name='user_settings'),
+    url(r'change-password/', change_password, name='change_password'),
+    path('favourite/post/<int:pk>', AddToFavorite.as_view(), name='add-favourite'),
+    path('delete-favourite/post/<int:pk>', RemoveFromFavorite.as_view(), name='remove-favourite'),
+    url(r'favourites/(?P<pk>[-\w]+)/', get_user_favourites, name='get_user_favourites'),
+
 ]
 if settings.DEBUG:
         urlpatterns += static(settings.MEDIA_URL,

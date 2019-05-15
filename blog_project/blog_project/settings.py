@@ -102,6 +102,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 4,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -158,3 +161,6 @@ AUTHENTICATION_BACKENDS = (
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 SOCIAL_AUTH_GITHUB_KEY = '5e4def45218cc6534a1b'
 SOCIAL_AUTH_GITHUB_SECRET = 'fbac81b824c17a386a33a08f1627c5be6c2b0add'
+
+SOCIAL_AUTH_FACEBOOK_KEY = '309907129906969'
+SOCIAL_AUTH_FACEBOOK_SECRET = '032f0f989cf8c48c9899cc4cb43bd949'
