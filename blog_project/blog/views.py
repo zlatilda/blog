@@ -7,6 +7,7 @@ from django.db.models import Q, Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import TemplateView, RedirectView
 from django.utils import timezone
+from django.core.mail import send_mail
 # Create your views here.
 
 
@@ -45,15 +46,16 @@ def signup(request, backend='django.contrib.auth.backends.ModelBackend'):
 
 def create_profile(request):
     if request.method == 'POST':
-        profile_form = ProfileForm(data=request.POST, files=request.FILES)
-        if profile_form.is_valid():
-            profile_form.save()
+        form = ProfileForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            form.save(commit=False)
+            """form.user = request.user
+            form.save()"""
+
             return redirect('blog:index')
     else:
-        profile_form = ProfileForm()
-    return render(request, 'registration/register.html', {'profile_form': profile_form})
-
-
+        form = ProfileForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 
 def post_detail(request, post_pk):
@@ -151,6 +153,26 @@ def post_new(request):
     return render(request, template, content)
 
 
+def edit_post(request, pk):
+    template='post-edit.html'
+    post = get_object_or_404(Post, pk=pk)
+
+    if request.method == 'POST':
+        form=PostForm(request.POST, request.FILES, instance=post)
+
+        if form.is_valid():
+            form.save()
+            return redirect('blog:index')
+    else:
+        form=PostForm(instance=post)
+
+    context={
+        'form': form,
+        'post': post,
+    }
+    return render(request, template, context)
+
+
 def order_by_params(request, variable):
     template="list.html"
 
@@ -171,11 +193,14 @@ def get_user_profile(request, username):
     user = User.objects.get(username=username)
     comments = Comment.objects.filter(user = user).order_by('-timestamp')
 
+    items = Post.objects.all().filter(user=user).order_by('-created')
+
     profile = UserProfile.objects.get(user=user)
     context = {
         'user': user,
         'comments': comments,
         'profile': profile,
+        'items': items,
     }
     return render(request, template, context)
 

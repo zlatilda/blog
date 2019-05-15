@@ -3,12 +3,13 @@ from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db.models.base import ObjectDoesNotExist
 from django.db.models.signals import post_save
 
 
 class UserProfile(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=1)
     thumb = models.ImageField(upload_to='profile_image', blank=True, default='default.png')
     bio = models.TextField(default='')
 

@@ -60,6 +60,7 @@
                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"><a  href="{{ post.get_like_url }}"><img src="{% static 'images/heart.png'%}" class="like"></a> <label id="likeamount"><b>{{ post.likes.count }}</b></label></div>
                 <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
                     <div class="row">
+                        <strong style="margin-top: 0.5em; margin-right: 1em;">Share: </strong>
                     {% load social_share %}
                     {% post_to_facebook object_or_url%}
                     <div class="facebook-this">
@@ -82,13 +83,14 @@
 				<p style="white-space: pre-line">{{ post.body }}</p><br>
 			</div>
 			<div class="row">
-                <div class="col-8"><p style="font-style: italic;">by <b>{{ post.user }}</b></p></div>
+                <div class="col-7"><p style="font-style: italic;">by <b>{{ post.user }}</b></p></div>
                 {% if post.user.username == user.username %}
-                    <div class="col-4" style="text-align: right;"><a href="{% url 'blog:post-delete' post.pk %}" onclick="return confirm('Do you really want to delete this post?')"><span style="color: red;">delete this post</span></a></div>
+                    <div class="col-5" style="text-align: right;">
+                        <a href="{% url 'blog:edit_post' post.pk %}"><span style="padding-right: 1%;">edit post</span></a>
+                        <a href="{% url 'blog:post-delete' post.pk %}" onclick="return confirm('Do you really want to delete this post?')"><span style="color: red;">delete post</span></a>
+                    </div>
                 {% endif %}
             </div>
-
-
 				 <form method="post">
                     {% csrf_token %}
                     {% if request.user.is_authenticated %}
@@ -99,7 +101,6 @@
                         <p style="color:red"> You're not authenticated to write a comment<p>
                     {% endif %}
                 </form>
-
 
 
             {% if comments %}
