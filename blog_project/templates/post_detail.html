@@ -58,14 +58,17 @@
 			<img src="{{ post.thumb.url }}" class="post_img"/>
 
 			<div class="row" style="padding-top: 1%;">
-                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"><a  href="{{ post.get_like_url }}"><img src="{% static 'images/heart.png'%}" class="like"></a> <label id="likeamount"><b>{{ post.likes.count }}</b></label>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <a  href="{{ post.get_like_url }}"><img src="{% static 'images/heart.png'%}" class="like"></a> <label id="likeamount"><b>{{ post.likes.count }}</b></label>
 
-                {% if favorite == 3 %}
-                    <a href="{% url 'blog:remove-favourite' post.pk %}"><img src="{% static 'images/remove_from_fav.png'%}" class="add_fav"></a>
-                {% elif favorite == 2 %}
-                     <a href="{% url 'blog:add-favourite' post.pk %}"><img src="{% static 'images/add-to_fav.png'%}" class="add_fav"></a>
+                   {% if favorite == 3 %}
+                        <a href="{% url 'blog:remove-favourite' post.pk %}" onclick="return alert('Removed from favourites')"><img src="{% static 'images/add-to_fav.png'%}" class="add_fav"></a>
+                    {% elif favorite == 2 %}
+                         <a href="{% url 'blog:add-favourite' post.pk %}" onclick="return alert('Added to favourites')"><img src="{% static 'images/remove_from_fav.png'%}" class="add_fav"></a>
+                    {%else %}
 
-                {%  endif%}
+                    {%  endif%}
+
             </div>
 
                 <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">

@@ -64,13 +64,16 @@ class Favorite(models.Model):
 class UserProfile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     bio = models.TextField(default='')
-    favorites = models.ManyToManyField(Post, related_name='favorited_by')
+    #favorites = models.ManyToManyField(Post, related_name='favorited_by')
 
     def save(self, *args, **kwargs):
         super(UserProfile, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.user.username
+
+    def get_fav_url(self):
+        return reverse("blog:fav-toggle", kwargs={"slug": self.slug})
 
 
 

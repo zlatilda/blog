@@ -53,18 +53,18 @@ def signup(request, backend='django.contrib.auth.backends.ModelBackend'):
     return render(request, 'registration/register.html', {'form': form, 'profile_form': profile_form})
 
 
-def create_profile(request):
+"""def create_profile(request):
     if request.method == 'POST':
         form = ProfileForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save(commit=False)
-            """form.user = request.user
-            form.save()"""
+            form.user = request.user
+            form.save()
 
             return redirect('blog:index')
     else:
         form = ProfileForm()
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})"""
 
 
 def post_detail(request, post_pk):
@@ -76,7 +76,7 @@ def post_detail(request, post_pk):
     fav = 1
     user = request.user
     if user.is_authenticated:
-        if not Favorite.objects.filter(user=request.user):
+        if not Favorite.objects.filter(user=request.user, post=post):
             fav = 2
         else:
             fav = 3
@@ -298,5 +298,18 @@ class RemoveFromFavorite(RedirectView):
         return url_
 
 
+"""class PostFavouriteToggle(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        slug = self.kwargs.get("slug")
+        print(slug)
+        obj = get_object_or_404(UserProfile, slug=slug)
+        url_ = obj.get_absolute_url()
+        user = self.request.user
+        if user.is_authenticated:
+            if user in obj.favorites.all():
+                obj.favorites.remove(user)
+            else:
+                obj.favorites.add(user)
+        return url_"""
 
 
